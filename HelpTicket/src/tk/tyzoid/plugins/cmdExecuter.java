@@ -19,7 +19,6 @@ import java.util.ArrayList;
 public class cmdExecuter implements CommandExecutor {
     
 
-	public settings cSettings = new settings();
 	public ArrayList<String> plugins = new ArrayList<String>();
 	
 	@SuppressWarnings("unused")
@@ -29,35 +28,47 @@ public class cmdExecuter implements CommandExecutor {
 		this.plugin = plugin;
 	}
 
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
 		Player player = null;
+	     if(command.getName().equalsIgnoreCase("newticket") || command.getName().equalsIgnoreCase("nticket")){
 		if (sender instanceof Player) {
 			player = (Player) sender;
-			
-		     if(command.getName().equalsIgnoreCase("newticket") || command.getName().equalsIgnoreCase("nticket")){
-		    	 System.out.println("TEST");
+			if(plugin.hasPermission(player, "helpticket.*") || plugin.hasPermission(player, "helpticket.send")){
 		    	 player.sendMessage("Sender: " + player.getName());
 		    	 player.sendMessage("Java Info: " + javaInfo());
 		    	 player.sendMessage("OS Info: " + osInfo());
 		    	 Plugin[] all = getPlugins();
-	                //player.getWorld().playEffect(player.getLocation(), Effect.SMOKE, 1000, 1000);		    	 
 	                for(Plugin plugin:all){
 			    		 String s = plugin.getDescription().getName();
 			    		 plugins.add(s);
 			    	 }
-	             player.sendMessage("Plugins: " + plugins);  		    			    	 
+	             player.sendMessage("Plugins: " + plugins);
+	             player.sendMessage("UUID: " + plugin.getUUID());
+	             File file = new File("server.log");
+	             player.sendMessage(ChatColor.RED + "Log: " + readLog(file, plugin.getLines()));
+	             player.sendMessage("Lines: " + plugin.getLines());
 		    	 return true;
-		     }else if(command.getName().equalsIgnoreCase("htreload") || command.getName().equalsIgnoreCase("htr")){
-		    	 cSettings.reloadData();
-		    	 return true;
-		     }	
-		     
+			}else{
+				player.sendMessage(ChatColor.RED + "You ain't got no perms for this!");
+			}
 		}else{
 			System.out.println("[HelpTicket] Plaease run this command as a player");
 			return true;
-		}		
+		}
+	     }else if(command.getName().equalsIgnoreCase("htreload") || command.getName().equalsIgnoreCase("htr")){
+	 		if (sender instanceof Player) {
+	    	 player = (Player) sender;
+				if(!(plugin.hasPermission(player, "helpticket.*") || plugin.hasPermission(player, "helpticket.send"))){
+					player.sendMessage(ChatColor.RED + "You ain't got no perms for this!");
+					return false;
+				}
+	 		}
+	    	 plugin.reloadData(player);
+	    	 return true;
+	     }
 		return false;
 }
 	
@@ -79,4 +90,48 @@ public class cmdExecuter implements CommandExecutor {
 		return list;
 	}
 	
+	public String readLog( File file, int lines) {
+		    try {
+		        java.io.RandomAccessFile fileHandler = new java.io.RandomAccessFile( file, "r" );
+		        long fileLength = file.length() - 1;
+		        StringBuilder sb = new StringBuilder();
+		        int line = 0;
+
+		        for( long filePointer = fileLength; filePointer != -1; filePointer-- ) {
+		            fileHandler.seek( filePointer );
+		            int readByte = fileHandler.readByte();
+
+		            if( readByte == 0xA ) {
+		                if (line == lines) {
+		                    if (filePointer == fileLength) {
+		                        continue;
+		                    } else {
+		                        break;
+		                    }
+		                }
+		            } else if( readByte == 0xD ) {
+		                line = line + 1;
+		                if (line == lines) {
+		                    if (filePointer == fileLength - 1) {
+		                        continue;
+		                    } else {
+		                        break;
+		                    }
+		                }
+		            }
+		           sb.append( ( char ) readByte );
+		        }
+
+		        sb.deleteCharAt(sb.length()-1);
+		        String lastLine = sb.reverse().toString();
+		        return lastLine;
+		    } catch( java.io.FileNotFoundException e ) {
+		        e.printStackTrace();
+		        return null;
+		    } catch( java.io.IOException e ) {
+		        e.printStackTrace();
+		        return null;
+		    }
+		}
+
 }

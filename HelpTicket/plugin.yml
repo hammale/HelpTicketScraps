@@ -1,5 +1,5 @@
 name: HelpTicket
-main: tk.bukkithelp.HelpTicket.HelpTicket
+main: tk.tyzoid.plugins.HelpTicket
 version: 1.0
 author: Tyzoid, hammale
 commands:
@@ -10,10 +10,10 @@ commands:
     description: Create a new ticket
     usage: |
   htr:
-    description: Reloads HelpTicker
+    description: Reloads HelpTicket
     usage: |
   htreload:
-    description: Reloads HelpTicker
+    description: Reloads HelpTicket
     usage: |        
 permissions:
     helpticket.*:
