@@ -1,0 +1,25 @@
+name: HelpTicket
+main: tk.bukkithelp.HelpTicket.HelpTicket
+version: 1.0
+author: Tyzoid, hammale
+commands:
+  newticket:
+    description: Create a new ticket
+    usage: |
+  nticket:
+    description: Create a new ticket
+    usage: |
+  htr:
+    description: Reloads HelpTicker
+    usage: |
+  htreload:
+    description: Reloads HelpTicker
+    usage: |        
+permissions:
+    helpticket.*:
+        description: Gives access to all HelpTicket's commands
+        children:
+            helpticket.send: true
+    helpticket.send:
+        description: Allows users to submit a ticket
+        default: OP
