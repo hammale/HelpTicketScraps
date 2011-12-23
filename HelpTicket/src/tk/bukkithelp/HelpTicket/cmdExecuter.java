@@ -20,6 +20,7 @@ public class cmdExecuter implements CommandExecutor {
     
 
 	public settings cSettings = new settings();
+	public ArrayList<String> plugins = new ArrayList<String>();
 	
 	@SuppressWarnings("unused")
 	private HelpTicket plugin;
@@ -40,18 +41,13 @@ public class cmdExecuter implements CommandExecutor {
 		    	 player.sendMessage("Sender: " + player.getName());
 		    	 player.sendMessage("Java Info: " + javaInfo());
 		    	 player.sendMessage("OS Info: " + osInfo());
-		    	 Plugin[] plugins = getPlugins();
-		    	 
-	                player.getWorld().playEffect(player.getLocation(), Effect.SMOKE, 1000, 1000);
-		    	 
-		            ArrayList<PluginData> plugins = pluginController.getPluginVersionsList();
-		            
-	                for (int i = page * entriesPerPage; i < page * entriesPerPage + entriesPerPage && i < plugins.size(); i++) {
-	                    MessageController.sendMessage(sender, console ? getLineConsole(plugins.get(i), maxNameLength) : getLineGame(plugins.get(i), longestNameWidth));
-	                }
-		    	 
-		    	 
-		    	 player.sendMessage("Plugins: " + getPlugins());
+		    	 Plugin[] all = getPlugins();
+	                //player.getWorld().playEffect(player.getLocation(), Effect.SMOKE, 1000, 1000);		    	 
+	                for(Plugin plugin:all){
+			    		 String s = plugin.getDescription().getName();
+			    		 plugins.add(s);
+			    	 }
+	             player.sendMessage("Plugins: " + plugins);  		    			    	 
 		    	 return true;
 		     }else if(command.getName().equalsIgnoreCase("htreload") || command.getName().equalsIgnoreCase("htr")){
 		    	 cSettings.reloadData();
